@@ -12,8 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.stage.*;
 
 import java.io.*;
 import java.io.File;
@@ -42,9 +41,13 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public AnchorPane mainScreenAP;
+    public MenuItem exportProjectButton;
+    public MenuItem exportConfigurationButton;
 
     @FXML
     private TableView<?> resultsTableView;
+
+
 
     // Json converters
     Gson configurationGson = new GsonBuilder().registerTypeAdapter(Configuration.class, new ConfigurationAdapter()).disableHtmlEscaping().setPrettyPrinting().create();
@@ -77,9 +80,8 @@ public class MainScreenController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 selectedProject = projectsLV.getSelectionModel().getSelectedItem();
-
+                exportProjectButton.setDisable(false);
                 configurationsLV.getSelectionModel().select(projects.get(selectedProject).getConfiguration());
-                configurationsLV.setDisable(false);
                 // TODO results
                 // results = projects.get(selectedProject).getResults();
             }
@@ -90,6 +92,7 @@ public class MainScreenController implements Initializable {
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 // When user selected another configuration, results will be derived from that configuration
                 selectedConfiguration = projectsLV.getSelectionModel().getSelectedItem();
+                exportConfigurationButton.setDisable(false);
             }
         });
     }
@@ -299,6 +302,96 @@ public class MainScreenController implements Initializable {
         }
     }
 
+    @FXML
+    public void importProject(ActionEvent event){
+        FileChooser fc = new FileChooser();
+        Stage stage = new Stage();
+        List<File> files = fc.showOpenMultipleDialog(stage);
+        String answer = "Cancel";
+        if(files != null) {
+            for (File file : files) {
+                if (projects.containsKey(removeExtension(file.getName()))) {
+                    answer = ask("Some .project files will be overwritten.", "Cancel", "OK");
+                    break;
+                }
+            }
+
+            if (answer.equals("OK")) {
+                for (File file : files) {
+                    if (file.getName().endsWith(".project")) {
+                        try {
+                            Files.copy(file.toPath(), projectsDirectory.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        refresh();
+
+    }
+    @FXML
+    public void exportProject(ActionEvent event) {
+        DirectoryChooser dc = new DirectoryChooser();
+        Stage stage = new Stage();
+        File f = dc.showDialog(stage);
+        if (f != null) {
+            Path path = f.toPath();
+            File file = path.resolve(Path.of(selectedProject + ".project")).toFile();
+            try (FileWriter fw = new FileWriter(file)) {
+                projectGson.toJson(projects.get(selectedProject), fw);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    @FXML
+    public void importConfiguration(ActionEvent event){
+        FileChooser fc = new FileChooser();
+        Stage stage = new Stage();
+        List<File> files = fc.showOpenMultipleDialog(stage);
+        String answer = "Cancel";
+        if(files != null) {
+            for (File file : files) {
+                if (configurations.containsKey(removeExtension(file.getName()))) {
+                    answer = ask("Some .configuration files will be overwritten.", "Cancel", "OK");
+                    break;
+                }
+            }
+
+            if (answer.equals("OK")) {
+                for (File file : files) {
+                    if (file.getName().endsWith(".configuration")) {
+                        try {
+                            Files.copy(file.toPath(), projectsDirectory.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        refresh();
+    }
+
+    @FXML
+    public void exportConfiguration(ActionEvent event){
+        DirectoryChooser dc = new DirectoryChooser();
+        Stage stage = new Stage();
+        File f = dc.showDialog(stage);
+        if (f != null) {
+            Path path = f.toPath();
+            File file = path.resolve(Path.of(selectedConfiguration + ".configuration")).toFile();
+            try (FileWriter fw = new FileWriter(file)) {
+                configurationGson.toJson(configurations.get(selectedConfiguration), fw);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
     private void checkIfFoldersExists() {
         if (!Files.exists(configurationsDirectory)) {
             try {
@@ -330,7 +423,8 @@ public class MainScreenController implements Initializable {
         configurationsLV.getItems().addAll(configurations.keySet());
 
         // Disable selecting configuration until a project is selected
-        configurationsLV.setDisable(true);
+        exportConfigurationButton.setDisable(true);
+        exportProjectButton.setDisable(true);
         projectsLV.getItems().addAll(projects.keySet());
 
         selectedProject = "";

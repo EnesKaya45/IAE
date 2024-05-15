@@ -297,14 +297,14 @@ public class MainScreenController implements Initializable {
     private void checkIfFoldersExists() {
         if (!Files.exists(configurationsDirectory)) {
             try {
-                Files.createFile(configurationsDirectory);
+                Files.createDirectory(configurationsDirectory);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
         if (!Files.exists(projectsDirectory)) {
             try {
-                Files.createFile(projectsDirectory);
+                Files.createDirectory(projectsDirectory);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

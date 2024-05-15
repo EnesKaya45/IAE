@@ -50,6 +50,7 @@ public class ProjectScreenController implements Initializable{
     private Project project;
     private String title;
     private boolean ready = false;
+    private List<File> files  = new ArrayList<>();
 
     @FXML
     public void save(ActionEvent event) {
@@ -59,12 +60,11 @@ public class ProjectScreenController implements Initializable{
         String mainFileToRun = mainFileToRunTF.getText();
         String arguments = argumentsTF.getText();
         String expectedOutput = expectedOutputTA.getText();
-        // TODO Birazcık düzenlemeye ihtiyaç var.
-        // ArrayList<Path> submissionZipFiles;
+        List<File> submissionZipFiles = files;
         Stage stage = (Stage) addButton.getScene().getWindow();
         if (!(title.isBlank() || configurationTitle.isBlank() || expectedOutput.isBlank())) {
             ready = true;
-            project = new Project(configurationTitle, filesToCompile, mainFileToRun, arguments, expectedOutput);
+            project = new Project(configurationTitle, filesToCompile, mainFileToRun, arguments, expectedOutput, submissionZipFiles);
             stage.close();
         } else stage.close();
     }
@@ -93,7 +93,7 @@ public class ProjectScreenController implements Initializable{
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*.zip"));
         Stage stage = new Stage();
-        List<File> files = fileChooser.showOpenMultipleDialog(stage);
+        files = fileChooser.showOpenMultipleDialog(stage);
     }
 
     @Override

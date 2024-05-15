@@ -141,7 +141,9 @@ public class MainScreenController implements Initializable {
             if (projectScreenController.isReady()) {
                 Project project = projectScreenController.getProject();
                 File path = projectsDirectory.resolve(Path.of(projectScreenController.getTitle() + ".project")).toFile();
-                projectGson.toJson(project, new FileWriter(path));
+                try (FileWriter fw = new FileWriter(path)){
+                    projectGson.toJson(project, fw);
+                }
                 refresh();
             }
         } catch (IOException e) {
@@ -164,7 +166,10 @@ public class MainScreenController implements Initializable {
 
             if (configurationScreenController.isReady()) {
                 Configuration configuration = configurationScreenController.getConfiguration();
-                configurationGson.toJson(configuration, new FileWriter(configurationsDirectory.toString() + File.separator + configurationScreenController.getTitle() + ".configuration"));
+                File path = configurationsDirectory.resolve(Path.of(configurationScreenController.getTitle() + ".configuration")).toFile();
+                try (FileWriter fw = new FileWriter(path)) {
+                    configurationGson.toJson(configuration, fw);
+                }
                 refresh();
             }
         } catch (Exception e) {
@@ -206,7 +211,7 @@ public class MainScreenController implements Initializable {
             Thread.sleep(5000);
             for (Thread t : threads) if (!t.isInterrupted()) t.interrupt();
             for (Submission s : submissions) {
-                results.add(new Result(s.getZipPath(), s.getResult()));
+                results.add(new Result(s.getZip(), s.getResult()));
             }
             for (Result r : results) {
                 // TODO sonuçları resultsLV'ye yazdır.

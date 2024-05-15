@@ -1,6 +1,7 @@
 package com.example.iae;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -19,7 +20,7 @@ public class Submission implements Runnable{
     private Project project;
     private Configuration configuration;
     private Path workingDirectory;
-    private Path zipPath;
+    private File zip;
     private String result = "Fail";
 
     public Submission(String name, Project project, Configuration configuration, Path workingDirectory, Path zipPath) {
@@ -27,14 +28,14 @@ public class Submission implements Runnable{
         this.project = project;
         this.configuration = configuration;
         this.workingDirectory = workingDirectory;
-        this.zipPath = zipPath;
+        this.zip = zip;
     }
 
     @Override
     public void run() {
         try {
             workingDirectory = Files.createTempDirectory(name);
-            ZipFile zipFile = new ZipFile(zipPath.toAbsolutePath().toString());
+            ZipFile zipFile = new ZipFile(zip.toString());
             zipFile.extractAll(workingDirectory.toAbsolutePath().toString());
             String config = configuration.getCommand()
                     .replace("FILES_TO_COMPILE", project.getFilesToCompile())
@@ -66,7 +67,7 @@ public class Submission implements Runnable{
         return result;
     }
 
-    public Path getZipPath() {
-        return zipPath;
+    public File getZip() {
+        return zip;
     }
 }

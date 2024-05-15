@@ -1,22 +1,23 @@
 package com.example.iae;
 
+import java.io.File;
 import java.nio.file.Path;
 
 public class Result {
-    Path path;
+    File file;
     String result;
 
-    public Result(Path path, String result) {
-        this.path = path;
+    public Result(File file, String result) {
+        this.file = file;
         this.result = result;
     }
 
-    public Path getPath() {
-        return path;
+    public File getPath() {
+        return file;
     }
 
-    public void setPath(Path path) {
-        this.path = path;
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public String getResult() {

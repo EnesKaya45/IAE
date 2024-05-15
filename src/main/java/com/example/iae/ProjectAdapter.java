@@ -15,15 +15,13 @@ public class ProjectAdapter implements JsonSerializer<Project>, JsonDeserializer
         String mainFileToRun = jsonObject.get("mainFileToRun").getAsString();
         String arguments = jsonObject.get("arguments").getAsString();
         String expectedOutput = jsonObject.get("expectedOutput").getAsString();
-        List<File> submissionZipFiles = jsonObject.get("submissionZipFiles").getAs
         return new Project(
                 configurationTitle,
                 filesToCompile,
                 mainFileToRun,
                 arguments,
-                expectedOutput,
-                submissionZipFiles,
-                results);
+                expectedOutput
+        );
     }
 
     @Override

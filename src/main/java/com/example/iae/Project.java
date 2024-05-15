@@ -28,6 +28,18 @@ public class Project {
         this.results = results;
     }
 
+    public Project(String configuration,
+                   String filesToCompile,
+                   String mainFileToRun,
+                   String arguments,
+                   String expectedOutput) {
+        this.configurationTitle = configuration;
+        this.filesToCompile = filesToCompile;
+        this.mainFileToRun = mainFileToRun;
+        this.arguments = arguments;
+        this.expectedOutput = expectedOutput;
+    }
+
     public String getConfiguration() {
         return configurationTitle;
     }

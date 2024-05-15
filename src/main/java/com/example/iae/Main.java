@@ -32,7 +32,8 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        // launch();
+        launch();
+        /*
         Gson configurationGson = new GsonBuilder().registerTypeAdapter(Configuration.class, new ConfigurationAdapter()).disableHtmlEscaping().setPrettyPrinting().create();
         Gson projectGson = new GsonBuilder().registerTypeAdapter(Project.class, new ProjectAdapter()).disableHtmlEscaping().setPrettyPrinting().create();
 
@@ -48,5 +49,6 @@ public class Main extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
     }
 }

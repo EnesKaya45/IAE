@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="664.0" prefWidth="646.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.iae.ProjectScreenController">
+   <children>
+      <VBox alignment="CENTER_LEFT" layoutX="117.0" layoutY="36.0" prefHeight="563.0" prefWidth="413.0" spacing="10.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Project Title" wrappingWidth="190.22265625">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Text>
+            <TextField fx:id="projectTitleTF" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Configuration" wrappingWidth="246.22265625">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Text>
+            <ListView fx:id="configurationsLV" prefHeight="200.0" prefWidth="200.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Files to compile" wrappingWidth="190.22265625">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Text>
+            <TextField fx:id="filesToCompileTF" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Main file to run" wrappingWidth="190.22265625">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Text>
+            <TextField fx:id="mainFileToRunTF" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Arguments" wrappingWidth="190.22265625">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Text>
+            <TextField fx:id="argumentsTF" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Expected output" wrappingWidth="190.22265625">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Text>
+            <TextArea fx:id="expectedOutputTA" prefHeight="200.0" prefWidth="200.0" />
+            <HBox>
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Submission zip files" wrappingWidth="233.22265625">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Text>
+                  <Button mnemonicParsing="false" onAction="#selectFiles" prefHeight="24.0" prefWidth="161.0" text="Select Files" />
+               </children>
+            </HBox>
+            <ListView fx:id="submissionsLV" prefHeight="200.0" prefWidth="413.0" />
+         </children>
+      </VBox>
+      <Button fx:id="addButton" layoutX="570.0" layoutY="620.0" mnemonicParsing="false" onAction="#save" text="ADD" />
+   </children>
+</AnchorPane>

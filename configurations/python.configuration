@@ -1,0 +1,3 @@
+{
+  "command": "python FILE_TO_RUN ARGUMENTS"
+}

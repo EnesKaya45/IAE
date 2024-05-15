@@ -1,0 +1,3 @@
+{
+  "command": "javac FILES_TO_COMPILE && java FILE_TO_RUN ARGUMENTS"
+}

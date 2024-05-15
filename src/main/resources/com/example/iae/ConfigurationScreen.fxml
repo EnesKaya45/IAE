@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="398.0" prefWidth="592.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.iae.ConfigurationScreenController">
+    <center>
+      <AnchorPane prefHeight="399.0" prefWidth="477.0">
+         <children>
+            <VBox alignment="CENTER_LEFT" layoutX="107.0" layoutY="44.0" prefHeight="285.0" prefWidth="378.0">
+               <children>
+                  <HBox>
+                     <children>
+                        <Label text="Configuration title" />
+                        <Label opacity="0.5" text=" (only English characters, numbers and underscores)" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <TextField fx:id="titleTF" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="285.0" />
+                        <Label prefHeight="30.0" prefWidth="89.0" text=".configuration" textFill="#0000007f" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="invalidL" text="Invalid configuration title" textFill="RED" visible="false" />
+                  <Label text="FILES_TO_COMPILE: to pass files that need to be compiled" />
+                  <Label text="FILE_TO_RUN: to pass main file that will run" />
+                  <Label text="ARGUMENTS: to pass arguments" />
+                  <Label text="&amp;&amp;: to run multiple commands" />
+                  <Label />
+                  <Label text="Construct command below using parameters above:" />
+                    <TextArea fx:id="commandTA" prefHeight="200.0" prefWidth="300.0" />
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+    </center>
+    <bottom>
+        <Button fx:id="addButton" mnemonicParsing="false" onAction="#save" text="ADD" BorderPane.alignment="CENTER_RIGHT" />
+    </bottom>
+</BorderPane>

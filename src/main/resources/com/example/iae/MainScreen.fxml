@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -32,7 +31,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#importConfiguration" text="Import Configuration" />
                   <MenuItem fx:id="exportConfigurationButton" mnemonicParsing="false" onAction="#exportConfiguration" text="Export Configuration" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Refresh" />
+                  <MenuItem mnemonicParsing="false" onAction="#refresh" text="Refresh" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -44,7 +43,7 @@
       </MenuBar>
       <AnchorPane layoutX="50.0" layoutY="43.0" prefHeight="176.0" prefWidth="500.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="176.0" prefWidth="469.0">
+            <HBox alignment="CENTER" layoutX="16.0" prefHeight="176.0" prefWidth="469.0">
                <children>
                   <VBox>
                      <children>
@@ -68,12 +67,11 @@
             </HBox>
          </children>
       </AnchorPane>
-      <Button layoutX="518.0" layoutY="131.0" mnemonicParsing="false" onAction="#runButtonPressed" text="Run" />
-      <CheckBox layoutX="487.0" layoutY="105.0" mnemonicParsing="false" text="Run after drop" />
+      <Button layoutX="542.0" layoutY="131.0" mnemonicParsing="false" onAction="#runButtonPressed" text="Run" />
       <TableView fx:id="resultsTV" layoutX="66.0" layoutY="264.0" prefHeight="200.0" prefWidth="469.0">
         <columns>
-          <TableColumn prefWidth="235.0" text="C1" />
-          <TableColumn minWidth="0.0" prefWidth="233.0" text="C2" />
+          <TableColumn fx:id="submittedFilesTC" prefWidth="235.0" text="Submitted File" />
+          <TableColumn fx:id="resultsTC" minWidth="0.0" prefWidth="233.0" text="Result" />
         </columns>
       </TableView>
    </children>

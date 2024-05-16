@@ -121,6 +121,6 @@ public class Project {
         System.out.println("Submission files: ");
         for (File f : getSubmissionZipFiles()) System.out.println(f);
         System.out.println("Results: ");
-        for (Result r : getResults()) System.out.println(r.getPath() + r.getResult());
+        for (Result r : getResults()) System.out.println(r.getFile() + r.getResult());
     }
 }

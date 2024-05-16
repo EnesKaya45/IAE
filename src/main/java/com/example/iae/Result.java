@@ -1,7 +1,6 @@
 package com.example.iae;
 
 import java.io.File;
-import java.nio.file.Path;
 
 public class Result {
     File file;
@@ -12,7 +11,7 @@ public class Result {
         this.result = result;
     }
 
-    public File getPath() {
+    public File getFile() {
         return file;
     }
 

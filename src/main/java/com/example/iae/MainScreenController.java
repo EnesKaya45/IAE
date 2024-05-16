@@ -2,6 +2,8 @@ package com.example.iae;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
@@ -18,7 +21,6 @@ import java.io.*;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.*;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,13 +43,21 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public AnchorPane mainScreenAP;
+
+    @FXML
     public MenuItem exportProjectButton;
+
+    @FXML
     public MenuItem exportConfigurationButton;
 
     @FXML
-    private TableView<?> resultsTableView;
+    private TableView<Result> resultsTV;
 
+    @FXML
+    private TableColumn<Result, File> submittedFilesTC;
 
+    @FXML
+    private TableColumn<Result, String> resultsTC;
 
     // Json converters
     Gson configurationGson = new GsonBuilder().registerTypeAdapter(Configuration.class, new ConfigurationAdapter()).disableHtmlEscaping().setPrettyPrinting().create();
@@ -57,8 +67,9 @@ public class MainScreenController implements Initializable {
     // Filenames without the extension are used to specify configurations and projects
     static HashMap<String, Configuration> configurations = new HashMap<>();
     static HashMap<String, Project> projects = new HashMap<>();
-    List<File> zipFiles = new ArrayList<>();
+
     ArrayList<Result> results = new ArrayList<>();
+    ObservableList<Result> resultsList = FXCollections.observableArrayList();
 
     // Path to saved configurations and projects
     Path configurationsDirectory = Paths.get("configurations");
@@ -67,23 +78,30 @@ public class MainScreenController implements Initializable {
     // Variables to hold the selected project, configuration, results
     String selectedProject;
     String selectedConfiguration;
+    List<File> zipFiles = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         checkIfFoldersExists();
         refresh();
 
-        /*
+        // Prepare table view columns
+        submittedFilesTC.setCellValueFactory(new PropertyValueFactory<Result, File>("file"));
+        resultsTC.setCellValueFactory(new PropertyValueFactory<Result, String>("result"));
 
-         */
         projectsLV.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 selectedProject = projectsLV.getSelectionModel().getSelectedItem();
                 exportProjectButton.setDisable(false);
                 configurationsLV.getSelectionModel().select(projects.get(selectedProject).getConfiguration());
-                // TODO results
-                // results = projects.get(selectedProject).getResults();
+                selectedConfiguration = projects.get(selectedProject).getConfiguration();
+                zipFilesLV.getItems().clear();
+                zipFiles = projects.get(selectedProject).getSubmissionZipFiles();
+                for(File f : zipFiles) zipFilesLV.getItems().add(f.getName());
+
+                // Get results of the selected project, convert to observable list, show results on the screen
+                resultsTV.setItems(FXCollections.observableArrayList(projects.get(selectedProject).getResults()));
             }
         });
 
@@ -218,11 +236,11 @@ public class MainScreenController implements Initializable {
             }
             for (Result r : results) {
                 // TODO sonuçları resultsLV'ye yazdır.
-                System.out.println(r.getPath() + " result is: " + r.getResult());
+                System.out.println(r.getFile() + " result is: " + r.getResult());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+            resultsTV.setItems(FXCollections.observableArrayList(results));
+
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -331,6 +349,7 @@ public class MainScreenController implements Initializable {
         refresh();
 
     }
+
     @FXML
     public void exportProject(ActionEvent event) {
         DirectoryChooser dc = new DirectoryChooser();
@@ -346,6 +365,7 @@ public class MainScreenController implements Initializable {
             }
         }
     }
+
     @FXML
     public void importConfiguration(ActionEvent event){
         FileChooser fc = new FileChooser();
@@ -390,7 +410,6 @@ public class MainScreenController implements Initializable {
             }
         }
     }
-
 
     private void checkIfFoldersExists() {
         if (!Files.exists(configurationsDirectory)) {

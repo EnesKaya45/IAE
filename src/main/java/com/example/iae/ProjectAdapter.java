@@ -65,7 +65,7 @@ public class ProjectAdapter implements JsonSerializer<Project>, JsonDeserializer
         JsonArray resultsArray = new JsonArray();
         for (Result result : project.getResults()) {
             JsonObject resultObject = new JsonObject();
-            resultObject.addProperty("file", result.getPath().toString());
+            resultObject.addProperty("file", result.getFile().toString());
             resultObject.addProperty("status", result.getResult());
             resultsArray.add(resultObject);
         }

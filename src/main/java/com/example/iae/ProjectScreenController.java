@@ -41,7 +41,7 @@ public class ProjectScreenController implements Initializable{
     public TextArea expectedOutputTA;
 
     @FXML
-    public ListView submissionsLV;
+    public ListView<File> submissionsLV;
 
     @FXML
     public Button addButton;
@@ -62,6 +62,7 @@ public class ProjectScreenController implements Initializable{
         String expectedOutput = expectedOutputTA.getText();
         List<File> submissionZipFiles = files;
         Stage stage = (Stage) addButton.getScene().getWindow();
+        // At least a title, configuration title and expected output is required.
         if (!(title.isBlank() || configurationTitle.isBlank() || expectedOutput.isBlank())) {
             ready = true;
             project = new Project(configurationTitle, filesToCompile, mainFileToRun, arguments, expectedOutput, submissionZipFiles);
@@ -90,10 +91,13 @@ public class ProjectScreenController implements Initializable{
 
     // TODO File chooser
     public void selectFiles(ActionEvent actionEvent) {
+        files.clear();
+        submissionsLV.getItems().clear();
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*.zip"));
         Stage stage = new Stage();
         files = fileChooser.showOpenMultipleDialog(stage);
+        submissionsLV.getItems().addAll(files);
     }
 
     @Override

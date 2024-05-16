@@ -17,10 +17,13 @@
    <children>
       <MenuBar>
         <menus>
-          <Menu mnemonicParsing="false" text="New">
+          <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#newProject" text="Project" />
-                  <MenuItem mnemonicParsing="false" onAction="#newConfiguration" text="Configuration" />
+              <MenuItem mnemonicParsing="false" onAction="#newProject" text="New Project" />
+                  <MenuItem mnemonicParsing="false" onAction="#newConfiguration" text="New Configuration" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="editConfigurationButton" mnemonicParsing="false" onAction="#editConfiguration" text="Edit Configuration" />
+                  <MenuItem fx:id="deleteConfigurationButton" mnemonicParsing="false" onAction="#deleteConfiguration" text="Delete Configuration" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Import/Export">

@@ -50,6 +50,8 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public MenuItem exportConfigurationButton;
+    public MenuItem editConfigurationButton;
+    public MenuItem deleteConfigurationButton;
 
     @FXML
     private TableView<Result> resultsTV;
@@ -113,9 +115,11 @@ public class MainScreenController implements Initializable {
         configurationsLV.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                selectedConfiguration = projectsLV.getSelectionModel().getSelectedItem();
+                selectedConfiguration = configurationsLV.getSelectionModel().getSelectedItem();
                 if (selectedConfiguration!=null) {
                     exportConfigurationButton.setDisable(false);
+                    editConfigurationButton.setDisable(false);
+                    deleteConfigurationButton.setDisable(false);
                 }
             }
         });
@@ -419,6 +423,43 @@ public class MainScreenController implements Initializable {
         }
     }
 
+    @FXML
+    public void editConfiguration(){
+        try {
+            FXMLLoader fxmlLoader  = new FXMLLoader(getClass().getResource("ConfigurationScreen.fxml"));
+            Parent root = (Parent) fxmlLoader.load();
+            ConfigurationScreenController configurationScreenController = fxmlLoader.getController();
+            configurationScreenController.setTitle(selectedConfiguration);
+            configurationScreenController.setCommand(configurations.get(selectedConfiguration).getCommand());
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(getStage());
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            if (configurationScreenController.isReady()) {
+                Configuration configuration = configurationScreenController.getConfiguration();
+                File path = configurationsDirectory.resolve(Path.of(configurationScreenController.getTitle() + ".configuration")).toFile();
+                try (FileWriter fw = new FileWriter(path)) {
+                    configurationGson.toJson(configuration, fw);
+                }
+                refresh();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    public void deleteConfiguration(){
+        try {
+            Files.deleteIfExists(configurationsDirectory.resolve(Path.of(selectedConfiguration + ".configuration")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        refresh();
+    }
+
     private void checkIfFoldersExists() {
         if (!Files.exists(configurationsDirectory)) {
             try {
@@ -452,6 +493,8 @@ public class MainScreenController implements Initializable {
 
         exportConfigurationButton.setDisable(true);
         exportProjectButton.setDisable(true);
+        editConfigurationButton.setDisable(true);
+        deleteConfigurationButton.setDisable(true);
 
         configurationsLV.getItems().addAll(configurations.keySet());
         projectsLV.getItems().addAll(projects.keySet());

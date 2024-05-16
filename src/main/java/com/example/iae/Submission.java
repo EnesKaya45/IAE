@@ -14,7 +14,7 @@ import net.lingala.zip4j.exception.ZipException;
 
 public class Submission implements Runnable{
     /**
-    This is class is used to process submissions.
+    This  class is used to process submissions.
      */
     private String name;
     private Project project;

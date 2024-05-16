@@ -25,11 +25,12 @@ public class ConfigurationScreenController {
     private Configuration configuration;
     private String title;
     private boolean ready = false;
+    private String command;
 
     @FXML
     public void save(ActionEvent event) {
         title = titleTF.getText();
-        String command = commandTA.getText();
+        command = commandTA.getText();
         configuration = new Configuration(command);
         ready = true;
         Stage stage = (Stage) addButton.getScene().getWindow();
@@ -50,5 +51,13 @@ public class ConfigurationScreenController {
 
     public boolean isReady() {
         return ready;
+    }
+
+    public void setTitle(String title) {
+        this.titleTF.setText(title);
+    }
+
+    public void setCommand(String command) {
+        this.commandTA.setText(command);
     }
 }

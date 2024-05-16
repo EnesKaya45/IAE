@@ -93,16 +93,15 @@ public class MainScreenController implements Initializable {
         projectsLV.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                selectedProject = projectsLV.getSelectionModel().getSelectedItem();
-
+                selectedProject = projectsLV.getSelectionModel().getSelectedItem();;
                 if (selectedProject!=null) {
                     exportProjectButton.setDisable(false);
                     configurationsLV.getSelectionModel().select(projects.get(selectedProject).getConfiguration());
                     selectedConfiguration = projects.get(selectedProject).getConfiguration();
 
-                    zipFiles.clear();
                     zipFilesLV.getItems().clear();
                     zipFiles = projects.get(selectedProject).getSubmissionZipFiles();
+                    System.out.println(zipFiles);
                     for (File f : zipFiles) zipFilesLV.getItems().add(f.getName());
 
                     // Get results of the selected project, convert to observable list, show results on the screen
@@ -183,7 +182,7 @@ public class MainScreenController implements Initializable {
     public void newConfiguration(ActionEvent event) {
         try {
             FXMLLoader fxmlLoader  = new FXMLLoader(getClass().getResource("ConfigurationScreen.fxml"));
-            Parent root = fxmlLoader.load();
+            Parent root = (Parent) fxmlLoader.load();
             ConfigurationScreenController configurationScreenController = fxmlLoader.getController();
 
             Stage stage = new Stage();

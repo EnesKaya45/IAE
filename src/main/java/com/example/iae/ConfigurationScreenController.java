@@ -2,15 +2,11 @@ package com.example.iae;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class ConfigurationScreenController {
 
@@ -26,8 +22,8 @@ public class ConfigurationScreenController {
     @FXML
     public Button addButton;
 
-    private String title;
     private Configuration configuration;
+    private String title;
     private boolean ready = false;
 
     @FXML
@@ -37,6 +33,10 @@ public class ConfigurationScreenController {
         configuration = new Configuration(command);
         ready = true;
         Stage stage = (Stage) addButton.getScene().getWindow();
+        if (!(title.isBlank() || command.isBlank())) {
+            ready = true;
+            configuration = new Configuration(command);
+        }
         stage.close();
     }
 

@@ -1,7 +1,5 @@
 package com.example.iae;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,8 +12,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +42,6 @@ public class ProjectScreenController implements Initializable{
     @FXML
     public Button addButton;
 
-    // Todo bir ara bak
     private Project project;
     private String title;
     private boolean ready = false;
@@ -66,8 +61,8 @@ public class ProjectScreenController implements Initializable{
         if (!(title.isBlank() || configurationTitle.isBlank() || expectedOutput.isBlank())) {
             ready = true;
             project = new Project(configurationTitle, filesToCompile, mainFileToRun, arguments, expectedOutput, submissionZipFiles);
-            stage.close();
-        } else stage.close();
+        }
+        stage.close();
     }
 
     public Project getProject() {

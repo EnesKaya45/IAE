@@ -46,6 +46,7 @@ public class Submission implements Runnable{
             commands.add("cmd");
             commands.add("/C");
             Collections.addAll(commands, config.split(" "));
+            commands.add("exit");
 
             ProcessBuilder pb = new ProcessBuilder(commands);
             pb.directory(workingDirectory.resolve(removeExtension(name)).toFile());

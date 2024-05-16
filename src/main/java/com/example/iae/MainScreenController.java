@@ -21,6 +21,7 @@ import java.io.*;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -208,46 +209,49 @@ public class MainScreenController implements Initializable {
     public void runButtonPressed(ActionEvent event) {
         ArrayList<Submission> submissions = new ArrayList<>();
         ArrayList<Thread> threads = new ArrayList<>();
-        try {
-            for (File file : zipFiles) {
-                Submission sub = new Submission(
-                        file.getName(),
-                        projects.get(selectedProject),
-                        configurations.get(selectedConfiguration),
-                        file);
-                Thread thread = new Thread(sub);
-                thread.start();
+        resultsTV.getItems().clear();
+        for (File file : zipFiles) {
+            Submission sub = new Submission(
+                    file.getName(),
+                    projects.get(selectedProject),
+                    configurations.get(selectedConfiguration),
+                    file);
+            Thread thread = new Thread(sub);
+            thread.start();
 
-                submissions.add(sub);
-                threads.add(thread);
-            }
-            mainScreenAP.setDisable(true);
-
-            // TODO Run'a basıldıktan sonra beklet
-            /*
-            long beginTime = System.currentTimeMillis();
-            boolean finished = false;
-            while (System.currentTimeMillis() - beginTime < 10000) {
-                for (Thread t : threads) {
-                    if t.
+            submissions.add(sub);
+            threads.add(thread);
+        }
+        // Wait only if there are unfinished threads, up to 5 seconds
+        mainScreenAP.setDisable(true);
+        boolean complete;
+        long begin = Instant.now().getEpochSecond();
+        do {
+            complete = true;
+            for (Thread t : threads) {
+                if (!t.isInterrupted()) {
+                    complete = false;
+                    break;
                 }
             }
-            mainScreenAP.setDisable(false);
-             */
-            Thread.sleep(5000);
-            for (Thread t : threads) if (!t.isInterrupted()) t.interrupt();
-            for (Submission s : submissions) {
-                results.add(new Result(s.getZip(), s.getResult()));
-            }
-            for (Result r : results) {
-                // TODO sonuçları resultsLV'ye yazdır.
-                System.out.println(r.getFile() + " result is: " + r.getResult());
-            }
-            resultsTV.setItems(FXCollections.observableArrayList(results));
-
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
         }
+        while (Instant.now().getEpochSecond() - begin < 10 || complete);
+        mainScreenAP.setDisable(false);
+
+        // Stop any unfinished (infinite loop) threads
+        for (Thread t : threads) if (!t.isInterrupted()) t.interrupt();
+        for (Submission s : submissions) results.add(new Result(s.getZip(), s.getResult()));
+
+        projects.get(selectedProject).setResults(results);
+        File path = projectsDirectory.resolve(Path.of(selectedProject + ".project")).toFile();
+        try (FileWriter fw = new FileWriter(path)){
+            projectGson.toJson(projects.get(selectedProject), fw);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        resultsTV.setItems(FXCollections.observableArrayList(results));
+        refresh();
+        projectsLV.getSelectionModel().select(selectedProject);
     }
 
     @FXML

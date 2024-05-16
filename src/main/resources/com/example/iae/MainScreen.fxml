@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="mainScreenAP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="527.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.iae.MainScreenController">
+<AnchorPane fx:id="mainScreenAP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="527.0" prefWidth="938.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.iae.MainScreenController">
    <children>
       <MenuBar>
         <menus>
@@ -41,7 +41,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <AnchorPane layoutX="50.0" layoutY="43.0" prefHeight="176.0" prefWidth="500.0">
+      <AnchorPane layoutX="219.0" layoutY="43.0" prefHeight="176.0" prefWidth="500.0">
          <children>
             <HBox alignment="CENTER" layoutX="16.0" prefHeight="176.0" prefWidth="469.0">
                <children>
@@ -67,11 +67,11 @@
             </HBox>
          </children>
       </AnchorPane>
-      <Button layoutX="542.0" layoutY="131.0" mnemonicParsing="false" onAction="#runButtonPressed" text="Run" />
-      <TableView fx:id="resultsTV" layoutX="66.0" layoutY="264.0" prefHeight="200.0" prefWidth="469.0">
+      <Button layoutX="791.0" layoutY="131.0" mnemonicParsing="false" onAction="#runButtonPressed" text="Run" />
+      <TableView fx:id="resultsTV" layoutX="70.0" layoutY="264.0" prefHeight="200.0" prefWidth="797.0">
         <columns>
-          <TableColumn fx:id="submittedFilesTC" prefWidth="235.0" text="Submitted File" />
-          <TableColumn fx:id="resultsTC" minWidth="0.0" prefWidth="233.0" text="Result" />
+          <TableColumn fx:id="submittedFilesTC" prefWidth="670.6667175292969" text="Submitted File" />
+          <TableColumn fx:id="resultsTC" minWidth="0.0" prefWidth="125.33331298828125" text="Result" />
         </columns>
       </TableView>
    </children>

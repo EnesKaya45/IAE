@@ -41,26 +41,25 @@ public class Submission implements Runnable{
                     .replace("FILES_TO_COMPILE", project.getFilesToCompile())
                     .replace("FILE_TO_RUN", project.getMainFileToRun())
                     .replace("ARGUMENTS", project.getArguments());
+            System.out.println("Çalıştırılan komut: " + config);
             ArrayList<String> commands = new ArrayList<>();
             commands.add("cmd");
             commands.add("/C");
             Collections.addAll(commands, config.split(" "));
+
             ProcessBuilder pb = new ProcessBuilder(commands);
-            pb.directory(workingDirectory.toFile()); // TODO düzgün çalışıyor mu?
+            pb.directory(workingDirectory.resolve(removeExtension(name)).toFile());
             pb.redirectErrorStream(true);
             Process p = pb.start();
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String s = "";
             StringBuilder output = new StringBuilder();
             while ((s = stdInput.readLine()) != null) output.append(s);
+            System.out.println(output);
             if (output.toString().equals(project.getExpectedOutput())) result = "Success";
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getResult() {
@@ -69,5 +68,13 @@ public class Submission implements Runnable{
 
     public File getZip() {
         return zip;
+    }
+
+    public String removeExtension(String s) {
+        if (s.indexOf(".") > 0) {
+            return s.substring(0, s.lastIndexOf("."));
+        } else {
+            return s;
+        }
     }
 }

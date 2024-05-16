@@ -214,8 +214,7 @@ public class MainScreenController implements Initializable {
                         file.getName(),
                         projects.get(selectedProject),
                         configurations.get(selectedConfiguration),
-                        Files.createTempDirectory(file.getName()),
-                        file.toPath());
+                        file);
                 Thread thread = new Thread(sub);
                 thread.start();
 

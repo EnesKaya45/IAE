@@ -23,11 +23,10 @@ public class Submission implements Runnable{
     private File zip;
     private String result = "Fail";
 
-    public Submission(String name, Project project, Configuration configuration, Path workingDirectory, Path zipPath) {
+    public Submission(String name, Project project, Configuration configuration, File zip) {
         this.name = name;
         this.project = project;
         this.configuration = configuration;
-        this.workingDirectory = workingDirectory;
         this.zip = zip;
     }
 
@@ -35,8 +34,9 @@ public class Submission implements Runnable{
     public void run() {
         try {
             workingDirectory = Files.createTempDirectory(name);
-            ZipFile zipFile = new ZipFile(zip.toString());
-            zipFile.extractAll(workingDirectory.toAbsolutePath().toString());
+            try (ZipFile zipFile = new ZipFile(zip)) {
+                zipFile.extractAll(workingDirectory.toAbsolutePath().toString());
+            }
             String config = configuration.getCommand()
                     .replace("FILES_TO_COMPILE", project.getFilesToCompile())
                     .replace("FILE_TO_RUN", project.getMainFileToRun())

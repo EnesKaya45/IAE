@@ -103,7 +103,6 @@ public class MainScreenController implements Initializable {
 
                     zipFilesLV.getItems().clear();
                     zipFiles = projects.get(selectedProject).getSubmissionZipFiles();
-                    System.out.println(zipFiles);
                     for (File f : zipFiles) zipFilesLV.getItems().add(f.getName());
 
                     // Get results of the selected project, convert to observable list, show results on the screen
@@ -210,6 +209,18 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public void runButtonPressed(ActionEvent event) {
+        if (selectedProject == null || selectedProject.isBlank()) {
+            warn("Project is not selected");
+            return;
+        }
+        if (selectedConfiguration == null || selectedConfiguration.isBlank()) {
+            warn("Configuration is not selected.");
+            return;
+        }
+        if (zipFiles.isEmpty()) {
+            warn("No zip file is selected.");
+            return;
+        }
         ArrayList<Submission> submissions = new ArrayList<>();
         ArrayList<Thread> threads = new ArrayList<>();
         resultsTV.getItems().clear();
@@ -280,7 +291,7 @@ public class MainScreenController implements Initializable {
             for (File file : files) {
                 if (file.getName().endsWith(".project")) {
                     try {
-                        Files.copy(file.toPath(), projectsDirectory, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(file.toPath(), projectsDirectory.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -306,7 +317,7 @@ public class MainScreenController implements Initializable {
             for (File file : files) {
                 if (file.getName().endsWith(".configuration")) {
                     try {
-                        Files.copy(file.toPath(), configurationsDirectory, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(file.toPath(), configurationsDirectory.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -337,7 +348,7 @@ public class MainScreenController implements Initializable {
         FileChooser fc = new FileChooser();
         Stage stage = new Stage();
         List<File> files = fc.showOpenMultipleDialog(stage);
-        String answer = "Cancel";
+        String answer = "OK";
         if(files != null) {
             for (File file : files) {
                 if (projects.containsKey(removeExtension(file.getName()))) {
@@ -383,7 +394,7 @@ public class MainScreenController implements Initializable {
         FileChooser fc = new FileChooser();
         Stage stage = new Stage();
         List<File> files = fc.showOpenMultipleDialog(stage);
-        String answer = "Cancel";
+        String answer = "OK";
         if(files != null) {
             for (File file : files) {
                 if (configurations.containsKey(removeExtension(file.getName()))) {
@@ -394,9 +405,10 @@ public class MainScreenController implements Initializable {
 
             if (answer.equals("OK")) {
                 for (File file : files) {
+                    System.out.println(file);
                     if (file.getName().endsWith(".configuration")) {
                         try {
-                            Files.copy(file.toPath(), projectsDirectory.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+                            Files.copy(file.toPath(), configurationsDirectory.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -532,6 +544,14 @@ public class MainScreenController implements Initializable {
         dialog.initModality(Modality.APPLICATION_MODAL);
         Optional<String> result = dialog.showAndWait();
         return result.orElse(defaultOption);
+    }
+
+    public void warn(String context) {
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setTitle(null);
+        a.setHeaderText(null);
+        a.setContentText(context);
+        a.show();
     }
 
     public Stage getStage() {

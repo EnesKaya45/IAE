@@ -93,24 +93,30 @@ public class MainScreenController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 selectedProject = projectsLV.getSelectionModel().getSelectedItem();
-                exportProjectButton.setDisable(false);
-                configurationsLV.getSelectionModel().select(projects.get(selectedProject).getConfiguration());
-                selectedConfiguration = projects.get(selectedProject).getConfiguration();
-                zipFilesLV.getItems().clear();
-                zipFiles = projects.get(selectedProject).getSubmissionZipFiles();
-                for(File f : zipFiles) zipFilesLV.getItems().add(f.getName());
 
-                // Get results of the selected project, convert to observable list, show results on the screen
-                resultsTV.setItems(FXCollections.observableArrayList(projects.get(selectedProject).getResults()));
+                if (selectedProject!=null) {
+                    exportProjectButton.setDisable(false);
+                    configurationsLV.getSelectionModel().select(projects.get(selectedProject).getConfiguration());
+                    selectedConfiguration = projects.get(selectedProject).getConfiguration();
+
+                    zipFiles.clear();
+                    zipFilesLV.getItems().clear();
+                    zipFiles = projects.get(selectedProject).getSubmissionZipFiles();
+                    for (File f : zipFiles) zipFilesLV.getItems().add(f.getName());
+
+                    // Get results of the selected project, convert to observable list, show results on the screen
+                    resultsTV.setItems(FXCollections.observableArrayList(projects.get(selectedProject).getResults()));
+                }
             }
         });
 
         configurationsLV.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                // When user selected another configuration, results will be derived from that configuration
                 selectedConfiguration = projectsLV.getSelectionModel().getSelectedItem();
-                exportConfigurationButton.setDisable(false);
+                if (selectedConfiguration!=null) {
+                    exportConfigurationButton.setDisable(false);
+                }
             }
         });
     }
@@ -428,25 +434,28 @@ public class MainScreenController implements Initializable {
         }
     }
 
-    // Refresh all saved files whenever any file is added/edited/deleted
+    // Refresh all whenever any file is added/edited/deleted
     public void refresh() {
         configurations.clear();
         projects.clear();
         results.clear();
+        zipFiles.clear();
+
         projectsLV.getItems().clear();
         configurationsLV.getItems().clear();
+        zipFilesLV.getItems().clear();
 
         configurations = getSavedConfigurations();
         projects = getSavedProjects();
 
-        configurationsLV.getItems().addAll(configurations.keySet());
-
-        // Disable selecting configuration until a project is selected
         exportConfigurationButton.setDisable(true);
         exportProjectButton.setDisable(true);
+
+        configurationsLV.getItems().addAll(configurations.keySet());
         projectsLV.getItems().addAll(projects.keySet());
 
         selectedProject = "";
+        selectedConfiguration = "";
     }
 
     public Set<File> getFilesInTheDirectory(Path dir) {

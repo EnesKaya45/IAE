@@ -26,11 +26,16 @@
                   <MenuItem fx:id="deleteConfigurationButton" mnemonicParsing="false" onAction="#deleteConfiguration" text="Delete Configuration" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Import/Export">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#importProject" text="Import Project" />
-                  <MenuItem fx:id="exportProjectButton" mnemonicParsing="false" onAction="#exportProject" text="Export Project" />
+            <Menu mnemonicParsing="false" text="Project">
+              <items>
+              <MenuItem mnemonicParsing="false" onAction="#importProject" text="Open Project" />
+                  <MenuItem fx:id="exportProjectButton" mnemonicParsing="false" onAction="#exportProject" text="Save Project" />
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Configuration">
+            <items>
                   <MenuItem mnemonicParsing="false" onAction="#importConfiguration" text="Import Configuration" />
                   <MenuItem fx:id="exportConfigurationButton" mnemonicParsing="false" onAction="#exportConfiguration" text="Export Configuration" />
                   <SeparatorMenuItem mnemonicParsing="false" />

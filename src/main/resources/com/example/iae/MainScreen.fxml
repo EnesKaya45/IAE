@@ -75,12 +75,13 @@
             </HBox>
          </children>
       </AnchorPane>
-      <Button layoutX="791.0" layoutY="131.0" mnemonicParsing="false" onAction="#runButtonPressed" text="Run" />
+      <Button layoutX="796.0" layoutY="131.0" mnemonicParsing="false" onAction="#runButtonPressed" text="Run" />
       <TableView fx:id="resultsTV" layoutX="70.0" layoutY="264.0" prefHeight="200.0" prefWidth="797.0">
         <columns>
           <TableColumn fx:id="submittedFilesTC" prefWidth="670.6667175292969" text="Submitted File" />
           <TableColumn fx:id="resultsTC" minWidth="0.0" prefWidth="125.33331298828125" text="Result" />
         </columns>
       </TableView>
+      <Label fx:id="statusL" alignment="CENTER" layoutX="706.0" layoutY="165.0" prefHeight="53.0" prefWidth="217.0" text="Press button above to run" />
    </children>
 </AnchorPane>

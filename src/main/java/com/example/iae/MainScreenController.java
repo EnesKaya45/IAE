@@ -1,10 +1,6 @@
 package com.example.iae;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -52,6 +48,7 @@ public class MainScreenController implements Initializable {
     public MenuItem exportConfigurationButton;
     public MenuItem editConfigurationButton;
     public MenuItem deleteConfigurationButton;
+    public Label statusL;
 
     @FXML
     private TableView<Result> resultsTV;
@@ -72,7 +69,6 @@ public class MainScreenController implements Initializable {
     static HashMap<String, Project> projects = new HashMap<>();
 
     ArrayList<Result> results = new ArrayList<>();
-    ObservableList<Result> resultsList = FXCollections.observableArrayList();
 
     // Path to saved configurations and projects
     Path configurationsDirectory = Paths.get("configurations");
@@ -89,37 +85,31 @@ public class MainScreenController implements Initializable {
         refresh();
 
         // Prepare table view columns
-        submittedFilesTC.setCellValueFactory(new PropertyValueFactory<Result, File>("file"));
-        resultsTC.setCellValueFactory(new PropertyValueFactory<Result, String>("result"));
+        submittedFilesTC.setCellValueFactory(new PropertyValueFactory<>("file"));
+        resultsTC.setCellValueFactory(new PropertyValueFactory<>("result"));
 
-        projectsLV.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                selectedProject = projectsLV.getSelectionModel().getSelectedItem();;
-                if (selectedProject!=null) {
-                    exportProjectButton.setDisable(false);
-                    configurationsLV.getSelectionModel().select(projects.get(selectedProject).getConfiguration());
-                    selectedConfiguration = projects.get(selectedProject).getConfiguration();
+        projectsLV.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
+            selectedProject = projectsLV.getSelectionModel().getSelectedItem();
+            if (selectedProject!=null) {
+                exportProjectButton.setDisable(false);
+                configurationsLV.getSelectionModel().select(projects.get(selectedProject).getConfiguration());
+                selectedConfiguration = projects.get(selectedProject).getConfiguration();
 
-                    zipFilesLV.getItems().clear();
-                    zipFiles = projects.get(selectedProject).getSubmissionZipFiles();
-                    for (File f : zipFiles) zipFilesLV.getItems().add(f.getName());
+                zipFilesLV.getItems().clear();
+                zipFiles = projects.get(selectedProject).getSubmissionZipFiles();
+                for (File f : zipFiles) zipFilesLV.getItems().add(f.getName());
 
-                    // Get results of the selected project, convert to observable list, show results on the screen
-                    resultsTV.setItems(FXCollections.observableArrayList(projects.get(selectedProject).getResults()));
-                }
+                // Get results of the selected project, convert to observable list, show results on the screen
+                resultsTV.setItems(FXCollections.observableArrayList(projects.get(selectedProject).getResults()));
             }
         });
 
-        configurationsLV.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                selectedConfiguration = configurationsLV.getSelectionModel().getSelectedItem();
-                if (selectedConfiguration!=null) {
-                    exportConfigurationButton.setDisable(false);
-                    editConfigurationButton.setDisable(false);
-                    deleteConfigurationButton.setDisable(false);
-                }
+        configurationsLV.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
+            selectedConfiguration = configurationsLV.getSelectionModel().getSelectedItem();
+            if (selectedConfiguration!=null) {
+                exportConfigurationButton.setDisable(false);
+                editConfigurationButton.setDisable(false);
+                deleteConfigurationButton.setDisable(false);
             }
         });
     }
@@ -156,10 +146,10 @@ public class MainScreenController implements Initializable {
 
 
     @FXML
-    public void newProject(ActionEvent event) {
+    public void newProject() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ProjectScreen.fxml"));
-            Parent root = (Parent) fxmlLoader.load();
+            Parent root = fxmlLoader.load();
             ProjectScreenController projectScreenController = fxmlLoader.getController();
 
             Stage stage = new Stage();
@@ -182,10 +172,10 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    public void newConfiguration(ActionEvent event) {
+    public void newConfiguration() {
         try {
             FXMLLoader fxmlLoader  = new FXMLLoader(getClass().getResource("ConfigurationScreen.fxml"));
-            Parent root = (Parent) fxmlLoader.load();
+            Parent root = fxmlLoader.load();
             ConfigurationScreenController configurationScreenController = fxmlLoader.getController();
 
             Stage stage = new Stage();
@@ -208,7 +198,7 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    public void runButtonPressed(ActionEvent event) {
+    public void runButtonPressed() {
         if (selectedProject == null || selectedProject.isBlank()) {
             warn("Project is not selected");
             return;
@@ -221,6 +211,13 @@ public class MainScreenController implements Initializable {
             warn("No zip file is selected.");
             return;
         }
+        for (File f : zipFiles) {
+            if (!f.exists()) {
+                warn("Zip files not found.");
+                return;
+            }
+        }
+        statusL.setText("Executing...");
         ArrayList<Submission> submissions = new ArrayList<>();
         ArrayList<Thread> threads = new ArrayList<>();
         resultsTV.getItems().clear();
@@ -237,13 +234,14 @@ public class MainScreenController implements Initializable {
             threads.add(thread);
         }
         // Wait only if there are unfinished threads, up to 5 seconds
+
         mainScreenAP.setDisable(true);
         boolean complete;
         long begin = Instant.now().getEpochSecond();
         do {
             complete = true;
             for (Thread t : threads) {
-                if (!t.isInterrupted()) {
+                if (!t.isAlive()) {
                     complete = false;
                     break;
                 }
@@ -252,11 +250,14 @@ public class MainScreenController implements Initializable {
         while (Instant.now().getEpochSecond() - begin < 10 || complete);
         mainScreenAP.setDisable(false);
 
+
+
         // Stop any unfinished (infinite loop) threads
         for (Thread t : threads) if (!t.isInterrupted()) t.interrupt();
         for (Submission s : submissions) results.add(new Result(s.getZip(), s.getResult()));
 
         projects.get(selectedProject).setResults(results);
+        projects.get(selectedProject).setSubmissionZipFiles(zipFiles);
         File path = projectsDirectory.resolve(Path.of(selectedProject + ".project")).toFile();
         try (FileWriter fw = new FileWriter(path)){
             projectGson.toJson(projects.get(selectedProject), fw);
@@ -264,7 +265,10 @@ public class MainScreenController implements Initializable {
             throw new RuntimeException(e);
         }
         resultsTV.setItems(FXCollections.observableArrayList(results));
+        String previous = selectedProject;
         refresh();
+        selectedProject = previous;
+        statusL.setText("Submitted files and results are saved.");
         projectsLV.getSelectionModel().select(selectedProject);
     }
 
@@ -344,7 +348,7 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    public void importProject(ActionEvent event){
+    public void importProject(){
         FileChooser fc = new FileChooser();
         Stage stage = new Stage();
         List<File> files = fc.showOpenMultipleDialog(stage);
@@ -374,7 +378,7 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    public void exportProject(ActionEvent event) {
+    public void exportProject() {
         DirectoryChooser dc = new DirectoryChooser();
         Stage stage = new Stage();
         File f = dc.showDialog(stage);
@@ -390,7 +394,7 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    public void importConfiguration(ActionEvent event){
+    public void importConfiguration(){
         FileChooser fc = new FileChooser();
         Stage stage = new Stage();
         List<File> files = fc.showOpenMultipleDialog(stage);
@@ -420,7 +424,7 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    public void exportConfiguration(ActionEvent event){
+    public void exportConfiguration(){
         DirectoryChooser dc = new DirectoryChooser();
         Stage stage = new Stage();
         File f = dc.showDialog(stage);
@@ -439,7 +443,7 @@ public class MainScreenController implements Initializable {
     public void editConfiguration(){
         try {
             FXMLLoader fxmlLoader  = new FXMLLoader(getClass().getResource("ConfigurationScreen.fxml"));
-            Parent root = (Parent) fxmlLoader.load();
+            Parent root = fxmlLoader.load();
             ConfigurationScreenController configurationScreenController = fxmlLoader.getController();
             configurationScreenController.setTitle(selectedConfiguration);
             configurationScreenController.setCommand(configurations.get(selectedConfiguration).getCommand());
@@ -499,6 +503,7 @@ public class MainScreenController implements Initializable {
         projectsLV.getItems().clear();
         configurationsLV.getItems().clear();
         zipFilesLV.getItems().clear();
+        resultsTV.getItems().clear();
 
         configurations = getSavedConfigurations();
         projects = getSavedProjects();
@@ -510,6 +515,7 @@ public class MainScreenController implements Initializable {
 
         configurationsLV.getItems().addAll(configurations.keySet());
         projectsLV.getItems().addAll(projects.keySet());
+        statusL.setText("Press button above to run");
 
         selectedProject = "";
         selectedConfiguration = "";
@@ -542,6 +548,7 @@ public class MainScreenController implements Initializable {
         dialog.setContentText(question);
         dialog.initOwner(getStage());
         dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(getStage());
         Optional<String> result = dialog.showAndWait();
         return result.orElse(defaultOption);
     }
@@ -551,6 +558,7 @@ public class MainScreenController implements Initializable {
         a.setTitle(null);
         a.setHeaderText(null);
         a.setContentText(context);
+        a.initOwner(getStage());
         a.show();
     }
 

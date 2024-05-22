@@ -1,6 +1,8 @@
 package com.example.iae;
 
+import javafx.application.HostServices;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,6 +17,7 @@ import javafx.stage.*;
 
 import java.io.*;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.*;
 import java.time.Instant;
@@ -26,6 +29,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+
+import java.awt.Desktop;
 
 public class MainScreenController implements Initializable {
 
@@ -519,6 +524,15 @@ public class MainScreenController implements Initializable {
 
         selectedProject = "";
         selectedConfiguration = "";
+    }
+
+    public void openWiki(ActionEvent e){
+        try {
+            Desktop.getDesktop().browse(URI.create("https://github.com/EnesKaya45/IAE/wiki"));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
     }
 
     public Set<File> getFilesInTheDirectory(Path dir) {

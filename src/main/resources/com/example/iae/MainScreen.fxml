@@ -44,7 +44,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="Start Tutorial" />
+              <MenuItem mnemonicParsing="false" onAction="#openWiki" text="Wiki ↗" />
             </items>
           </Menu>
         </menus>

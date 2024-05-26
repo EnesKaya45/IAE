@@ -452,6 +452,7 @@ public class MainScreenController implements Initializable {
             ConfigurationScreenController configurationScreenController = fxmlLoader.getController();
             configurationScreenController.setTitle(selectedConfiguration);
             configurationScreenController.setCommand(configurations.get(selectedConfiguration).getCommand());
+            configurationScreenController.getTitleTF().setDisable(true);
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);

@@ -60,4 +60,8 @@ public class ConfigurationScreenController {
     public void setCommand(String command) {
         this.commandTA.setText(command);
     }
+
+    public TextField getTitleTF() {
+        return titleTF;
+    }
 }
